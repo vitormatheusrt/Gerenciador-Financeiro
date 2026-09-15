@@ -1,0 +1,1505 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ESTILOS ADICIONADOS PARA OS BOTÕES (METAS, EXTRATO E VOLTAR AO PAINEL) -->
+<style>
+    /* 1. Botão Metas - Roxo Preenchido */
+    .action-purple, .btn-metas {
+        background-color: #7c3aed !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        transition: background-color 0.2s ease !important;
+    }
+    .action-purple:hover, .btn-metas:hover {
+        background-color: #6d28d9 !important;
+    }
+
+    /* 2. Botão Extrato - Azul Escuro */
+    .action-blue-dark, .btn-extrato {
+        background-color: #1e40af !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        transition: background-color 0.2s ease !important;
+    }
+    .action-blue-dark:hover, .btn-extrato:hover {
+        background-color: #1e3a8a !important;
+    }
+
+    /* 3. Botão Voltar ao Painel - Escuro com Borda e Texto Azul Claro */
+    .btn-voltar, .btn-back-panel {
+        background-color: #1b222d !important;
+        color: #38bdf8 !important;
+        border: 1px solid #2a3444 !important;
+        border-radius: 10px !important;
+        padding: 8px 16px !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+    .btn-voltar:hover, .btn-back-panel:hover {
+        background-color: #242c3b !important;
+        border-color: #38bdf8 !important;
+        color: #38bdf8 !important;
+    }
+</style>
+
+<!-- ========================================================================== -->
+<!-- SEÇÃO 1: PAINEL DE REGISTROS E FORMULÁRIOS (ENTRADA / SAÍDA / METAS) -->
+<!-- ========================================================================== -->
+{% if aba_ativa in ['novo', 'entrada', 'saida'] %}
+<div class="registro-container">
+    
+    <!-- [1.1] ETAPA DE SELEÇÃO DE CATEGORIAS -->
+    <div id="etapa-selecao">
+        <div class="registro-header-bar">
+            <a href="{{ url_for('index') }}" class="btn-voltar">
+                <span>←</span> Voltar ao Painel
+            </a>
+            
+            {% if aba_ativa == 'entrada' %}
+                <h2 class="title-section">💚 Escolha a categoria de Entrada:</h2>
+            {% elif aba_ativa == 'saida' %}
+                <h2 class="title-section">❤️ Escolha a categoria de Saída:</h2>
+            {% else %}
+                <h2 class="title-section">🚀 O que você deseja registrar hoje?</h2>
+            {% endif %}
+        </div>
+        
+        <div class="grid-opcoes">
+            {% if aba_ativa in ['novo', 'saida'] %}
+            <!-- Card 1.1.1: Despesas Fixas -->
+            <div class="card-opcao card-btn-red" onclick="abrirFormularioFocado('despesa_fixa')">
+                <div class="icone-card bg-red">📄</div>
+                <h3>Despesas Fixas</h3>
+                <p>Boletos, aluguel, faturas e parcelas.</p>
+                <span class="btn-card-action btn-red">+ Registrar Conta</span>
+            </div>
+
+            <!-- Card 1.1.2: Gastos do Dia a Dia -->
+            <div class="card-opcao card-btn-amber" onclick="abrirFormularioFocado('gasto_diario')">
+                <div class="icone-card bg-amber">🛒</div>
+                <h3>Gastos do Dia a Dia</h3>
+                <p>Alimentação, Uber, mercado e saídas.</p>
+                <span class="btn-card-action btn-amber">+ Lançar Gasto</span>
+            </div>
+            {% endif %}
+
+            {% if aba_ativa in ['novo', 'entrada'] %}
+            <!-- Card 1.1.3: Salário / Renda -->
+            <div class="card-opcao card-btn-green" onclick="abrirFormularioFocado('salario')">
+                <div class="icone-card bg-green">💼</div>
+                <h3>Salário / Renda</h3>
+                <p>Fixo, comissões e adiantamento.</p>
+                <span class="btn-card-action btn-green">+ Adicionar Renda</span>
+            </div>
+
+            <!-- Card 1.1.4: Renda Extra -->
+            <div class="card-opcao card-btn-blue" onclick="abrirFormularioFocado('renda_extra')">
+                <div class="icone-card bg-blue">⚡</div>
+                <h3>Renda Extra</h3>
+                <p>Freelas, vendas avulsas e cashback.</p>
+                <span class="btn-card-action btn-blue">+ Registrar Extra</span>
+            </div>
+            {% endif %}
+
+            {% if aba_ativa == 'novo' %}
+            <!-- Card 1.1.5: Nova Meta / Objetivo -->
+            <div class="card-opcao card-btn-purple" onclick="abrirFormularioFocado('meta')">
+                <div class="icone-card bg-purple">🎯</div>
+                <h3>Nova Meta</h3>
+                <p>Reserva, sonhos, viagens e objetivos.</p>
+                <span class="btn-card-action btn-purple">+ Criar Meta</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- [1.2] ETAPA DE PREENCHIMENTO DO FORMULÁRIO -->
+    <div id="etapa-formulario" style="display: none;">
+        <div class="registro-header-bar">
+            <button type="button" class="btn-voltar" onclick="voltarParaSelecao()">
+                <span>←</span> Trocar Categoria
+            </button>
+        </div>
+
+        {% if aba_ativa in ['novo', 'saida'] %}
+        <!-- Form 1.2.1: Despesa Fixa -->
+        <form id="form-despesa_fixa" action="/adicionar" method="POST" class="form-registro-focado" style="display: none;">
+            <input type="hidden" name="tipo" value="despesa">
+            <div class="form-header-focus">
+                <div class="icone-card bg-red">📄</div>
+                <div>
+                    <h3>Nova Despesa Fixa ou Conta</h3>
+                    <p>Cadastre faturas, boletos ou cobranças parceladas.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Descrição</label>
+                <input type="text" name="descricao" placeholder="Ex: Conta de Luz, Aluguel, Netflix" required>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Valor (R$)</label>
+                    <input type="number" step="0.01" name="valor" placeholder="0,00" required>
+                </div>
+                <div class="campo">
+                    <label>Data de Vencimento</label>
+                    <input type="date" name="data_vencimento" value="{{ hoje }}">
+                </div>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Status do Pagamento</label>
+                    <select name="pago">
+                        <option value="" selected>⏳ Pendente (A Pagar)</option>
+                        <option value="on">✅ Já Pago</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Forma de Pagamento</label>
+                    <select name="forma_pagamento">
+                        <option value="boleto">📄 Boleto</option>
+                        <option value="pix">⚡ Pix / Débito</option>
+                        <option value="cartao_credito">💳 Cartão de Crédito</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="box-toggle-opt">
+                <div class="toggle-header">
+                    <div>
+                        <strong>🔄 Repetir esta despesa?</strong>
+                        <small>Gerar lançamentos automáticos futuros</small>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="eh_parcelado" id="chk-despesa-recorrente" onchange="toggleBoxOpt('opt-despesa-recorrente', this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="opt-despesa-recorrente" class="toggle-content" style="display: none;">
+                    <div class="campo-duplo">
+                        <div class="campo">
+                            <label>Tipo de Repetição</label>
+                            <select name="tipo_repeticao">
+                                <option value="dia_fixo" selected>Dia Fixo do Mês</option>
+                                <option value="dia_util">Dia Útil do Mês</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label>Quantidade de Parcelas/Meses</label>
+                            <input type="number" name="qtd_parcelas" placeholder="Ex: 12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-confirmar bg-red">Salvar Despesa Fixa</button>
+        </form>
+
+        <!-- Form 1.2.2: Gasto Diário -->
+        <form id="form-gasto_diario" action="/adicionar" method="POST" class="form-registro-focado" style="display: none;">
+            <input type="hidden" name="tipo" value="despesa">
+            <input type="hidden" name="pago" value="on">
+            <div class="form-header-focus">
+                <div class="icone-card bg-amber">🛒</div>
+                <div>
+                    <h3>Novo Gasto do Dia a Dia</h3>
+                    <p>Registre pequenas compras e gastos cotidianos.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>O que você comprou?</label>
+                <input type="text" name="descricao" placeholder="Ex: Almoço, Uber, Padaria" required>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Valor Total (R$)</label>
+                    <input type="number" step="0.01" id="val-gasto" name="valor" placeholder="0,00" required>
+                </div>
+                <div class="campo">
+                    <label>Categoria</label>
+                    <select name="categoria">
+                        <option value="Alimentação">🍔 Alimentação</option>
+                        <option value="Transporte">🚗 Transporte / Uber</option>
+                        <option value="Mercado">🛒 Mercado</option>
+                        <option value="Lazer">🍿 Lazer & Saídas</option>
+                        <option value="Outros" selected>📦 Outros</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Forma de Pagamento</label>
+                    <select name="forma_pagamento" onchange="verificarCartaoCredito(this, 'box-parcelamento-gasto')">
+                        <option value="pix" selected>⚡ Pix / Débito</option>
+                        <option value="credito">💳 Cartão de Crédito</option>
+                        <option value="dinheiro">💵 Dinheiro Espécie</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Data da Compra</label>
+                    <input type="date" name="data_vencimento" value="{{ hoje }}">
+                </div>
+            </div>
+
+            <div id="box-parcelamento-gasto" class="box-toggle-opt" style="display: none;">
+                <div class="toggle-header">
+                    <div>
+                        <strong>💳 Essa compra foi parcelada?</strong>
+                        <small>Dividir o valor em lançamentos nos próximos meses</small>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="eh_parcelado" id="chk-parcelado-gasto" onchange="toggleBoxOpt('opt-qtd-parcelas-gasto', this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="opt-qtd-parcelas-gasto" class="toggle-content" style="display: none;">
+                    <div class="campo">
+                        <label>Em quantas vezes?</label>
+                        <select name="qtd_parcelas">
+                            <option value="2">2x sem juros</option>
+                            <option value="3">3x sem juros</option>
+                            <option value="4">4x sem juros</option>
+                            <option value="5">5x sem juros</option>
+                            <option value="6">6x sem juros</option>
+                            <option value="10">10x sem juros</option>
+                            <option value="12">12x sem juros</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-confirmar bg-amber">Salvar Gasto</button>
+        </form>
+        {% endif %}
+
+        {% if aba_ativa in ['novo', 'entrada'] %}
+        <!-- Form 1.2.3: Salário / Renda -->
+        <form id="form-salario" action="/adicionar" method="POST" class="form-registro-focado" style="display: none;">
+            <input type="hidden" name="tipo" value="receita">
+            <input type="hidden" name="categoria" value="Salário">
+            <div class="form-header-focus">
+                <div class="icone-card bg-green">💼</div>
+                <div>
+                    <h3>Registrar Salário</h3>
+                    <p>Lançamento da sua renda principal ou remuneração.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Descrição</label>
+                <input type="text" name="descricao" value="Salário Mensal" required>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Valor Líquido (R$)</label>
+                    <input type="number" step="0.01" name="valor" placeholder="0,00" required>
+                </div>
+                <div class="campo">
+                    <label>Comissão / Bônus (R$)</label>
+                    <input type="number" step="0.01" name="valor_comissao" placeholder="0,00">
+                </div>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Dia do Recebimento</label>
+                    <input type="date" name="data_vencimento" value="{{ hoje }}">
+                </div>
+                <div class="campo">
+                    <label>Status do Crédito</label>
+                    <select name="pago">
+                        <option value="on" selected>✅ Já caiu na conta</option>
+                        <option value="">⏳ Previsto (A receber)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="box-toggle-opt">
+                <div class="toggle-header">
+                    <div>
+                        <strong>📅 Receber este valor todo mês?</strong>
+                        <small>Cria o agendamento automático mensal do salário</small>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="eh_parcelado" id="chk-salario-mensal" onchange="toggleBoxOpt('opt-salario-mensal', this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div id="opt-salario-mensal" class="toggle-content" style="display: none;">
+                    <div class="campo-duplo">
+                        <div class="campo">
+                            <label>Tipo de Regra</label>
+                            <select name="tipo_repeticao">
+                                <option value="dia_fixo">Dia Fixo</option>
+                                <option value="dia_util" selected>5º Dia Útil</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label>Projeção de Meses</label>
+                            <input type="number" name="qtd_parcelas" value="12" placeholder="Ex: 12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-confirmar bg-green">Salvar Salário</button>
+        </form>
+
+        <!-- Form 1.2.4: Renda Extra -->
+        <form id="form-renda_extra" action="/adicionar" method="POST" class="form-registro-focado" style="display: none;">
+            <input type="hidden" name="tipo" value="receita">
+            <input type="hidden" name="categoria" value="Renda Extra">
+            <div class="form-header-focus">
+                <div class="icone-card bg-blue">⚡</div>
+                <div>
+                    <h3>Registrar Renda Extra</h3>
+                    <p>Ganho esporádico, serviços avulsos ou vendas.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Origem / Serviço</label>
+                <input type="text" name="descricao" placeholder="Ex: Freela de Design, Venda OLX, Cash-back" required>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Valor Recebido (R$)</label>
+                    <input type="number" step="0.01" name="valor" placeholder="0,00" required>
+                </div>
+                <div class="campo">
+                    <label>Data de Entrada</label>
+                    <input type="date" name="data_vencimento" value="{{ hoje }}">
+                </div>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Forma de Recebimento</label>
+                    <select name="forma_recebimento">
+                        <option value="pix" selected>⚡ Pix Instantâneo</option>
+                        <option value="transferencia">🏦 Transferência / TED</option>
+                        <option value="dinheiro">💵 Dinheiro Vivo</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Status</label>
+                    <select name="pago">
+                        <option value="on" selected>✅ Confirmado</option>
+                        <option value="">⏳ A Receber</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-confirmar bg-blue">Salvar Renda Extra</button>
+        </form>
+        {% endif %}
+
+        {% if aba_ativa == 'novo' %}
+        <!-- Form 1.2.5: Nova Meta / Objetivo -->
+        <form id="form-meta" action="{{ url_for('adicionar_meta') }}" method="POST" class="form-registro-focado" style="display: none;">
+            <div class="form-header-focus">
+                <div class="icone-card bg-purple">🎯</div>
+                <div>
+                    <h3>Criar Nova Meta ou Objetivo</h3>
+                    <p>Defina o valor a alcançar e acompanhe o progresso.</p>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Nome do Objetivo</label>
+                <input type="text" name="titulo" placeholder="Ex: Reserva de Emergência, Viagem, Carro Novo" required>
+            </div>
+
+            <div class="campo-duplo">
+                <div class="campo">
+                    <label>Valor Inicial Guardado (R$)</label>
+                    <input type="number" step="0.01" name="valor_atual" placeholder="0,00" value="0.00" required>
+                </div>
+                <div class="campo">
+                    <label>Valor da Meta Final (R$)</label>
+                    <input type="number" step="0.01" name="valor_objetivo" placeholder="5000,00" required>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Ícone / Emoji</label>
+                <input type="text" name="icone" placeholder="🎯" value="🎯">
+            </div>
+
+            <button type="submit" class="btn-confirmar bg-purple">Salvar Meta</button>
+        </form>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- CSS ADICIONAL PARA A OPÇÃO PURPLE (METAS) E BLUE -->
+<style>
+    .bg-purple { background: rgba(139, 92, 246, 0.15) !important; color: #a78bfa !important; }
+    .btn-purple { background: #8b5cf6 !important; color: #fff !important; }
+    .card-btn-purple:hover { border-color: #8b5cf6 !important; }
+    .action-blue { background: #3b82f6 !important; color: #fff !important; }
+    .action-blue:hover { background: #2563eb !important; }
+</style>
+
+<!-- SCRIPT DE CONTROLE DOS FORMULÁRIOS E DIRECIONAMENTO DIRETO -->
+<script>
+function abrirFormularioFocado(tipo) {
+    document.getElementById('etapa-selecao').style.display = 'none';
+    document.getElementById('etapa-formulario').style.display = 'block';
+    
+    const forms = document.querySelectorAll('.form-registro-focado');
+    forms.forEach(f => f.style.display = 'none');
+    
+    const formAlvo = document.getElementById('form-' + tipo);
+    if (formAlvo) {
+        formAlvo.style.display = 'block';
+    }
+}
+
+function voltarParaSelecao() {
+    document.getElementById('etapa-formulario').style.display = 'none';
+    document.getElementById('etapa-selecao').style.display = 'block';
+}
+
+function toggleBoxOpt(id, chk) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.style.display = chk.checked ? 'block' : 'none';
+    }
+}
+
+function verificarCartaoCredito(selectEl, boxId) {
+    const box = document.getElementById(boxId);
+    if (box) {
+        const ehCredito = (selectEl.value === 'credito' || selectEl.value === 'cartao_credito');
+        box.style.display = ehCredito ? 'block' : 'none';
+        
+        if (!ehCredito) {
+            const chk = document.getElementById('chk-parcelado-gasto');
+            if (chk) {
+                chk.checked = false;
+                toggleBoxOpt('opt-qtd-parcelas-gasto', chk);
+            }
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const foco = urlParams.get('foco');
+    if (foco) {
+        abrirFormularioFocado(foco);
+    }
+});
+</script>
+
+<!-- ========================================================================== -->
+<!-- SEÇÃO 2: ABA DE METAS E OBJETIVOS -->
+<!-- ========================================================================== -->
+{% elif aba_ativa == 'metas' %}
+
+<style>
+    .metas-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 10px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .metas-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .metas-title h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0 0 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .metas-title p {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .metas-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-add-meta {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn-add-meta:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    }
+
+    .metas-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 20px;
+    }
+
+    .meta-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 24px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .meta-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .meta-card-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .meta-icon-box {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: rgba(139, 92, 246, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .meta-card-info h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #f8fafc;
+        font-weight: 700;
+    }
+
+    .meta-card-info p {
+        margin: 2px 0 0 0;
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+
+    .btn-delete-meta {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .btn-delete-meta:hover {
+        color: #fb7185;
+    }
+
+    .meta-progress-container {
+        margin: 20px 0 12px 0;
+    }
+
+    .meta-values {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 8px;
+    }
+
+    .meta-val-atual {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #a78bfa;
+    }
+
+    .meta-val-meta {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    .meta-bar-bg {
+        width: 100%;
+        height: 10px;
+        background: #0f172a;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #334155;
+    }
+
+    .meta-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b5cf6, #c084fc);
+        border-radius: 20px;
+        transition: width 0.4s ease;
+    }
+
+    .meta-percent {
+        text-align: right;
+        font-size: 0.75rem;
+        color: #a78bfa;
+        font-weight: 600;
+        margin-top: 6px;
+    }
+
+    /* ESTILOS DO CAMPOS DE DEPÓSITO DIRETO NA META */
+    .meta-deposit-form {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #2a3444;
+    }
+
+    .input-deposit {
+        flex: 1;
+        background: #0f172a;
+        border: 1px solid #334155;
+        color: #f8fafc;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .input-deposit:focus {
+        border-color: #8b5cf6;
+    }
+
+    .btn-deposit {
+        background: #7c3aed;
+        color: #ffffff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .btn-deposit:hover {
+        background: #6d28d9;
+    }
+
+    .empty-metas-card {
+        grid-column: 1 / -1;
+        background: #1e293b;
+        border: 1px dashed #334155;
+        border-radius: 16px;
+        padding: 48px;
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    .empty-metas-card h3 {
+        color: #f1f5f9;
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="metas-container">
+    <div class="metas-header">
+        <div class="metas-title">
+            <h2>🎯 Minhas Metas e Objetivos</h2>
+            <p>Acompanhe o progresso das suas conquistas e economias.</p>
+        </div>
+        <div class="metas-actions">
+            <a href="{{ url_for('index', aba='novo', foco='meta') }}" class="btn-add-meta">
+                <span>➕</span> Nova Meta
+            </a>
+            <a href="{{ url_for('index') }}" class="btn-back-panel">
+                <span>←</span> Voltar ao Painel
+            </a>
+        </div>
+    </div>
+
+    <div class="metas-grid">
+        {% if metas %}
+            {% for m in metas %}
+                {% set pct = (m.valor_atual / m.valor_objetivo * 100) if m.valor_objetivo > 0 else 0 %}
+                {% set pct_limitado = 100 if pct > 100 else pct %}
+                <div class="meta-card">
+                    <div>
+                        <div class="meta-card-top">
+                            <div class="meta-card-info">
+                                <div class="meta-icon-box">{{ m.icone or '🎯' }}</div>
+                                <div>
+                                    <h3>{{ m.titulo }}</h3>
+                                    <p>Objetivo: R$ {{ "%.2f"|format(m.valor_objetivo) }}</p>
+                                </div>
+                            </div>
+                            <a href="{{ url_for('excluir_meta', id=m.id) }}" class="btn-delete-meta" title="Excluir Meta" onclick="return confirm('Deseja excluir esta meta?')">🗑️</a>
+                        </div>
+
+                        <div class="meta-progress-container">
+                            <div class="meta-values">
+                                <span class="meta-val-atual">R$ {{ "%.2f"|format(m.valor_atual) }}</span>
+                                <span class="meta-val-meta">Meta: R$ {{ "%.2f"|format(m.valor_objetivo) }}</span>
+                            </div>
+                            <div class="meta-bar-bg">
+                                <div class="meta-bar-fill" style="width: {{ pct_limitado }}%;"></div>
+                            </div>
+                            <div class="meta-percent">{{ "%.1f"|format(pct) }}% Alcançado</div>
+                        </div>
+                    </div>
+
+                    <!-- FORMULÁRIO DE DEPÓSITO DIRETO NA META -->
+                    <form action="{{ url_for('depositar_meta', id=m.id) }}" method="POST" class="meta-deposit-form">
+                        <input type="number" step="0.01" min="0.01" name="valor" placeholder="R$ Adicionar valor" required class="input-deposit">
+                        <button type="submit" class="btn-deposit">+ Guardar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-metas-card">
+                <h3>Nenhuma meta cadastrada ainda</h3>
+                <p>Crie metas para sua reserva de emergência, viagens, compras ou sonhos!</p>
+                <br>
+                <a href="{{ url_for('index', aba='novo', foco='meta') }}" class="btn-add-meta">
+                    ➕ Criar Minha Primeira Meta
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- SEÇÃO 3: ABA DE EXTRATO DETALHADO -->
+<!-- ========================================================================== -->
+{% elif aba_ativa == 'extrato' %}
+
+<style>
+    .extrato-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 10px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .extrato-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .extrato-title h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0 0 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .extrato-title p {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .filter-bar-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-group label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .filter-select {
+        background: #0f172a;
+        color: #f8fafc;
+        border: 1px solid #334155;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        outline: none;
+        cursor: pointer;
+        min-width: 120px;
+        transition: border-color 0.2s;
+    }
+
+    .filter-select:focus {
+        border-color: #3b82f6;
+    }
+
+    .btn-filter-submit {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #fff;
+        border: none;
+        padding: 11px 22px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.1s, box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-filter-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    .kpi-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-bottom: 32px;
+    }
+
+    .kpi-box {
+        background: #1e293b;
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid #334155;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kpi-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+    }
+
+    .kpi-box.income::before { background: #10b981; }
+    .kpi-box.expense::before { background: #f43f5e; }
+    .kpi-box.balance::before { background: #6366f1; }
+
+    .kpi-box-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .kpi-box-title {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .kpi-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .income .kpi-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .expense .kpi-icon { background: rgba(244, 63, 94, 0.15); color: #f43f5e; }
+    .balance .kpi-icon { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+
+    .kpi-box-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .txt-emerald { color: #34d399; }
+    .txt-rose { color: #fb7185; }
+    .txt-indigo { color: #818cf8; }
+
+    .section-block {
+        margin-bottom: 36px;
+    }
+
+    .section-title-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .section-title-bar h3 {
+        font-size: 1.15rem;
+        color: #f1f5f9;
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .modern-table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .modern-table th {
+        padding: 12px 16px;
+        color: #64748b;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    .modern-table tbody tr {
+        background: #1e293b;
+        transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    .modern-table tbody tr:hover {
+        background: #243347;
+        transform: translateY(-1px);
+    }
+
+    .modern-table td {
+        padding: 16px;
+        font-size: 0.9rem;
+        color: #e2e8f0;
+        vertical-align: middle;
+    }
+
+    .modern-table td:first-child {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+    }
+
+    .modern-table td:last-child {
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+    .status-badge:hover {
+        opacity: 0.85;
+    }
+
+    .badge-paid {
+        background: rgba(16, 185, 129, 0.12);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-pending {
+        background: rgba(244, 63, 94, 0.12);
+        color: #fb7185;
+        border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .badge-paid .status-dot { background: #34d399; }
+    .badge-pending .status-dot { background: #fb7185; }
+
+    .category-pill {
+        background: #0f172a;
+        color: #94a3b8;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        border: 1px solid #334155;
+    }
+
+    .action-btn-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-icon-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #0f172a;
+        border: 1px solid #334155;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-icon-action:hover {
+        background: #334155;
+        color: #fff;
+    }
+
+    .btn-icon-action.delete:hover {
+        background: rgba(244, 63, 94, 0.2);
+        color: #fb7185;
+        border-color: #f43f5e;
+    }
+
+    .btn-link-view {
+        color: #60a5fa;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: rgba(96, 165, 250, 0.1);
+        transition: background 0.2s;
+    }
+
+    .btn-link-view:hover {
+        background: rgba(96, 165, 250, 0.2);
+    }
+</style>
+
+<div class="extrato-container">
+    
+    <!-- CABEÇALHO DO EXTRATO -->
+    <div class="extrato-header">
+        <div class="extrato-title">
+            <h2>📊 Extrato Mensal Detalhado</h2>
+            <p>Monitore entradas, saídas e previsões com clareza visual.</p>
+        </div>
+        <a href="{{ url_for('index') }}" class="btn-back-panel">
+            <span>←</span> Voltar ao Painel
+        </a>
+    </div>
+
+    <!-- SELETOR E FILTRO DE PERÍODO -->
+    <div class="filter-bar-card">
+        <form action="{{ url_for('index') }}" method="GET" class="filter-form">
+            <input type="hidden" name="aba" value="extrato">
+            
+            <div class="filter-group">
+                <label>Mês de Referência</label>
+                <select name="mes" class="filter-select">
+                    {% for m in range(1, 13) %}
+                        <option value="{{ "%02d"|format(m) }}" {% if mes_selecionado and (mes_selecionado|int) == m %}selected{% elif not mes_selecionado and mes_atual[5:]|int == m %}selected{% endif %}>
+                            {{ "%02d"|format(m) }} - {% if m==1 %}Janeiro{% elif m==2 %}Fevereiro{% elif m==3 %}Março{% elif m==4 %}Abril{% elif m==5 %}Maio{% elif m==6 %}Junho{% elif m==7 %}Julho{% elif m==8 %}Agosto{% elif m==9 %}Setembro{% elif m==10 %}Outubro{% elif m==11 %}Novembro{% else %}Dezembro{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Ano</label>
+                <select name="ano" class="filter-select">
+                    {% for a in range(2024, 2030) %}
+                        <option value="{{ a }}" {% if ano_selecionado and (ano_selecionado|int) == a %}selected{% elif not ano_selecionado and mes_atual[:4]|int == a %}selected{% endif %}>
+                            {{ a }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn-filter-submit">
+                <span>🔍</span> Filtrar Resultados
+            </button>
+        </form>
+    </div>
+
+    <!-- CARDS DE RESUMO FINANCEIRO DO MÊS FILTRADO -->
+    {% if mes_selecionado and ano_selecionado %}
+    <div class="kpi-summary-grid">
+        <div class="kpi-box income">
+            <div class="kpi-box-header">
+                <span class="kpi-box-title">RECEITAS NO MÊS</span>
+                <div class="kpi-icon">↗</div>
+            </div>
+            <div class="kpi-box-value txt-emerald">R$ {{ "%.2f"|format(total_entradas_mes) }}</div>
+        </div>
+
+        <div class="kpi-box expense">
+            <div class="kpi-box-header">
+                <span class="kpi-box-title">DESPESAS NO MÊS</span>
+                <div class="kpi-icon">↘</div>
+            </div>
+            <div class="kpi-box-value txt-rose">R$ {{ "%.2f"|format(total_saidas_mes) }}</div>
+        </div>
+
+        <div class="kpi-box balance">
+            <div class="kpi-box-header">
+                <span class="kpi-box-title">BALANÇO LÍQUIDO</span>
+                <div class="kpi-icon">⚖</div>
+            </div>
+            <div class="kpi-box-value {% if (total_entradas_mes - total_saidas_mes) >= 0 %}txt-emerald{% else %}txt-rose{% endif %}">
+                R$ {{ "%.2f"|format(total_entradas_mes - total_saidas_mes) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- TABELA 1: LISTA DE TRANSAÇÕES DO MÊS -->
+    <div class="section-block">
+        <div class="section-title-bar">
+            <h3>🗓️ Movimentações de {{ mes_selecionado }}/{{ ano_selecionado }}</h3>
+        </div>
+
+        <div class="modern-table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Status</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Vencimento</th>
+                        <th>Valor</th>
+                        <th style="text-align: center; width: 100px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if transacoes_mes %}
+                        {% for t in transacoes_mes %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('alternar_status', id=t.id) }}" class="status-badge {% if t.pago == 1 %}badge-paid{% else %}badge-pending{% endif %}" title="Clique para alternar o status">
+                                    <span class="status-dot"></span>
+                                    {% if t.pago == 1 %}Pago{% else %}Pendente{% endif %}
+                                </a>
+                            </td>
+                            <td><strong>{{ t.descricao }}</strong></td>
+                            <td><span class="category-pill">{{ t.categoria or 'Geral' }}</span></td>
+                            <td style="color: #94a3b8;">{{ t.data_vencimento }}</td>
+                            <td class="{% if t.tipo == 'receita' %}txt-emerald{% else %}txt-rose{% endif %}" style="font-weight: 700;">
+                                {% if t.tipo == 'receita' %}+{% else %}-{% endif %} R$ {{ "%.2f"|format(t.valor) }}
+                            </td>
+                            <td>
+                                <div class="action-btn-group">
+                                    <a href="{{ url_for('editar', id=t.id) }}" class="btn-icon-action" title="Editar">✏️</a>
+                                    <a href="{{ url_for('excluir', id=t.id) }}" class="btn-icon-action delete" onclick="return confirm('Excluir esta transação?')" title="Excluir">🗑️</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b; padding: 32px;">
+                                Nenhuma transação registrada neste período.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TABELA 2: HISTÓRICO MÊS A MÊS -->
+    <div class="section-block">
+        <div class="section-title-bar">
+            <h3>📜 Histórico Consolidado</h3>
+        </div>
+
+        <div class="modern-table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Mês / Ano</th>
+                        <th>Total Receitas</th>
+                        <th>Total Despesas</th>
+                        <th>Saldo do Mês</th>
+                        <th style="text-align: center;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if extrato_ordenado %}
+                        {% for mes_key, dados in extrato_ordenado.items() %}
+                        <tr>
+                            <td><strong>{{ mes_key }}</strong></td>
+                            <td class="txt-emerald" style="font-weight: 600;">R$ {{ "%.2f"|format(dados.receitas) }}</td>
+                            <td class="txt-rose" style="font-weight: 600;">R$ {{ "%.2f"|format(dados.despesas) }}</td>
+                            <td class="{% if dados.saldo_mes >= 0 %}txt-emerald{% else %}txt-rose{% endif %}" style="font-weight: 700;">
+                                R$ {{ "%.2f"|format(dados.saldo_mes) }}
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="{{ url_for('index', aba='extrato', mes=mes_key[5:], ano=mes_key[:4]) }}" class="btn-link-view">
+                                    👁️ Detalhar Mês
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #64748b; padding: 32px;">
+                                Nenhum histórico acumulado disponível.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TABELA 3: PROJEÇÕES FUTURAS -->
+    {% if projecao_futura %}
+    <div class="section-block">
+        <div class="section-title-bar">
+            <h3>🔮 Projeções para Meses Seguintes</h3>
+        </div>
+
+        <div class="modern-table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Mês Futuro</th>
+                        <th>Receitas Previstas</th>
+                        <th>Despesas Previstas</th>
+                        <th>Saldo Estimado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in projecao_futura %}
+                    <tr>
+                        <td><strong>{{ p.mes }}</strong></td>
+                        <td class="txt-emerald" style="font-weight: 600;">R$ {{ "%.2f"|format(p.receitas) }}</td>
+                        <td class="txt-rose" style="font-weight: 600;">R$ {{ "%.2f"|format(p.despesas) }}</td>
+                        <td class="{% if p.saldo_projetado >= 0 %}txt-emerald{% else %}txt-rose{% endif %}" style="font-weight: 700;">
+                            R$ {{ "%.2f"|format(p.saldo_projetado) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ========================================================================== -->
+<!-- SEÇÃO 4: PAINEL PRINCIPAL (DASHBOARD) -->
+<!-- ========================================================================== -->
+{% else %}
+
+<!-- HERO DASHBOARD / MENSAGEM DE BOAS-VINDAS -->
+<div class="dashboard-hero">
+    <div class="user-greeting">
+        <div class="avatar-badge">{{ session.get('usuario_nome', 'V')[0] }}</div>
+        <div>
+            <h1>Olá, {{ session.get('usuario_nome', 'Usuário') }} 👋</h1>
+            <p>Seu controle financeiro simplificado e em tempo real.</p>
+        </div>
+    </div>
+    
+    <div class="action-bar-buttons">
+        <a href="{{ url_for('index', aba='entrada') }}" class="action-btn action-green">+ Entrada</a>
+        <a href="{{ url_for('index', aba='saida') }}" class="action-btn action-red">- Saída</a>
+        <a href="{{ url_for('index', aba='metas') }}" class="action-btn action-purple">🎯 Metas</a>
+        <a href="{{ url_for('index', aba='extrato') }}" class="action-btn action-blue-dark">📊 Extrato</a>
+    </div>
+</div>
+
+<!-- CARTÕES DE MÉTRICAS E KPIS -->
+<div class="kpi-grid">
+    <div class="kpi-card card-emerald">
+        <div class="kpi-top">
+            <span>Saldo Real (Contas Pagas)</span>
+            <span class="pill-badge pill-green">Ativo</span>
+        </div>
+        <div class="kpi-amount">R$ {{ "%.2f"|format(saldo) }}</div>
+        <div class="kpi-progress-bar"><div class="fill-green" style="width: 100%;"></div></div>
+        <small>Disponível na conta</small>
+    </div>
+
+    <div class="kpi-card card-rose">
+        <div class="kpi-top">
+            <span>Contas Pendentes</span>
+            <span class="pill-badge pill-red">Atenção</span>
+        </div>
+        <div class="kpi-amount">R$ {{ "%.2f"|format(contas_a_pagar) }}</div>
+        <div class="kpi-progress-bar"><div class="fill-red" style="width: 50%;"></div></div>
+        <small>Total a pagar neste mês</small>
+    </div>
+
+    <div class="kpi-card card-violet">
+        <div class="kpi-top">
+            <span>Balanço Previsto</span>
+            <span class="pill-badge pill-purple">Estimativa</span>
+        </div>
+        <div class="kpi-amount">R$ {{ "%.2f"|format(saldo - contas_a_pagar) }}</div>
+        <div class="kpi-progress-bar"><div class="fill-purple" style="width: 75%;"></div></div>
+        <small>Projeção final do mês</small>
+    </div>
+</div>
+
+<!-- PAINÉIS DE ACESSO RÁPIDO E ATIVIDADES -->
+<div class="dashboard-sections">
+    
+    <!-- Central de Acesso Rápido -->
+    <div class="panel-card">
+        <div class="panel-title">
+            <h3>⚡ Acesso Rápido a Operações</h3>
+        </div>
+        <div class="quick-hub-grid">
+            <a href="{{ url_for('index', aba='saida', foco='despesa_fixa') }}" class="hub-item hub-red">
+                <span class="hub-icon">💸</span>
+                <strong>Pagar Conta</strong>
+                <small>Boletos e Faturas</small>
+            </a>
+
+            <a href="{{ url_for('index', aba='saida', foco='gasto_diario') }}" class="hub-item hub-amber">
+                <span class="hub-icon">🛒</span>
+                <strong>Gasto Rápido</strong>
+                <small>Alimentação e Lazer</small>
+            </a>
+
+            <a href="{{ url_for('index', aba='entrada', foco='salario') }}" class="hub-item hub-green">
+                <span class="hub-icon">💰</span>
+                <strong>Lançar Salário</strong>
+                <small>Renda Principal</small>
+            </a>
+
+            <a href="{{ url_for('index', aba='extrato') }}" class="hub-item hub-blue">
+                <span class="hub-icon">📈</span>
+                <strong>Relatórios</strong>
+                <small>Visão detalhada</small>
+            </a>
+        </div>
+    </div>
+
+    <!-- LISTA DE ATIVIDADES RECENTES -->
+    <div class="panel-card">
+        <div class="panel-title">
+            <h3>📋 Atividades Recentes</h3>
+            <a href="{{ url_for('index', aba='extrato') }}" class="link-more">Ver Tudo →</a>
+        </div>
+        <div class="activity-list">
+            {% if ultimas_transacoes %}
+                {% for t in ultimas_transacoes %}
+                <div class="activity-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1f293d;">
+                    <div class="activity-left" style="display: flex; align-items: center; gap: 12px;">
+                        <div class="tag-icon {% if t.tipo == 'receita' %}tag-in{% else %}tag-out{% endif %}">
+                            {% if t.tipo == 'receita' %}↓{% else %}↑{% endif %}
+                        </div>
+                        <div>
+                            <strong>{{ t.descricao }}</strong><br>
+                            <small style="color: #8b92a5;">{{ t.data_vencimento }}</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="val-tag {% if t.tipo == 'receita' %}txt-green{% else %}txt-red{% endif %}">
+                            {% if t.tipo == 'receita' %}+{% else %}-{% endif %} R$ {{ "%.2f"|format(t.valor) }}
+                        </span>
+                        <a href="{{ url_for('editar', id=t.id) }}" title="Editar" style="text-decoration: none; font-size: 15px;">✏️</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-box">Nenhuma movimentação registrada ainda.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

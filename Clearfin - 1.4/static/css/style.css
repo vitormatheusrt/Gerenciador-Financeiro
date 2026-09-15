@@ -1,0 +1,704 @@
+/* ==========================================================================
+   CLEARFIN - ESTILOS GLOBAIS E RESET
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   NAVEGAÇÃO E CABEÇALHO SUPERIOR
+   ========================================================================== */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #21262d;
+}
+
+.brand-logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #8b949e;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+}
+
+.nav-links a.btn-sair {
+    color: #f85149;
+}
+
+/* ==========================================================================
+   DASHBOARD HERO & AÇÕES RÁPIDAS
+   ========================================================================== */
+.dashboard-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 24px 32px;
+    margin-bottom: 24px;
+}
+
+.user-greeting {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar-badge {
+    width: 48px;
+    height: 48px;
+    background: #238636;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.3rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-greeting h1 {
+    font-size: 1.4rem;
+    color: #ffffff;
+}
+
+.user-greeting p {
+    color: #8b949e;
+    font-size: 0.88rem;
+}
+
+.action-bar-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.action-btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.action-green { background: #238636; color: #ffffff; }
+.action-red { background: #da3633; color: #ffffff; }
+.action-purple { background: #8957e5; color: #ffffff; }
+
+/* ==========================================================================
+   CARTOES DE MÉTRICAS (KPIs)
+   ========================================================================== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.kpi-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.kpi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #8b949e;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.pill-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.pill-green { background: rgba(35, 134, 54, 0.2); color: #3fb950; }
+.pill-red { background: rgba(218, 54, 51, 0.2); color: #f85149; }
+.pill-purple { background: rgba(137, 87, 229, 0.2); color: #a371f7; }
+
+.kpi-amount {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 12px 0;
+}
+
+.kpi-progress-bar {
+    height: 6px;
+    background: #21262d;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.fill-green { height: 100%; background: #3fb950; }
+.fill-red { height: 100%; background: #f85149; }
+.fill-purple { height: 100%; background: #a371f7; }
+
+.kpi-card small {
+    color: #8b949e;
+    font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   PAINÉIS DE ACESSO RÁPIDO E ATIVIDADES
+   ========================================================================== */
+.dashboard-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .dashboard-sections { grid-template-columns: 1fr; }
+}
+
+.panel-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.panel-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.panel-title h3 {
+    color: #ffffff;
+    font-size: 1.05rem;
+}
+
+.link-more {
+    color: #58a6ff;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.quick-hub-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.hub-item {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    padding: 16px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.hub-item:hover {
+    border-color: #58a6ff;
+    transform: translateY(-2px);
+}
+
+.hub-icon { font-size: 1.4rem; margin-bottom: 4px; }
+.hub-item strong { color: #f0f6fc; font-size: 0.9rem; }
+.hub-item small { color: #8b949e; font-size: 0.78rem; }
+
+/* LISTA DE ATIVIDADES */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #21262d;
+}
+
+.activity-row:last-child { border-bottom: none; }
+
+.activity-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tag-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.tag-in { background: rgba(63, 185, 80, 0.15); color: #3fb950; }
+.tag-out { background: rgba(248, 81, 73, 0.15); color: #f85149; }
+
+.activity-left strong { display: block; color: #f0f6fc; font-size: 0.9rem; }
+.activity-left small { color: #8b949e; font-size: 0.78rem; }
+
+.val-tag { font-weight: 700; font-size: 0.95rem; }
+.txt-green { color: #3fb950; }
+.txt-red { color: #f85149; }
+
+.empty-box {
+    color: #8b949e;
+    font-size: 0.88rem;
+    text-align: center;
+    padding: 20px;
+}
+
+/* ==========================================================================
+   SELEÇÃO DE CATEGORIAS DE REGISTRO
+   ========================================================================== */
+.registro-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.registro-header-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.btn-voltar {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-voltar:hover {
+    background: #30363d;
+    color: #ffffff;
+    border-color: #8b949e;
+    transform: translateX(-2px);
+}
+
+.title-section {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.grid-opcoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.card-opcao {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.card-opcao:hover {
+    transform: translateY(-3px);
+    border-color: #58a6ff;
+}
+
+.icone-card {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+}
+
+.card-opcao h3 { color: #ffffff; font-size: 1.05rem; margin-bottom: 4px; }
+.card-opcao p { color: #8b949e; font-size: 0.82rem; margin-bottom: 16px; }
+
+.btn-card-action {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+/* CORES DOS CARDS E BOTÕES */
+.bg-red { background: rgba(218, 54, 51, 0.2); color: #f85149; }
+.bg-amber { background: rgba(210, 153, 34, 0.2); color: #d29922; }
+.bg-green { background: rgba(35, 134, 54, 0.2); color: #3fb950; }
+.bg-blue { background: rgba(88, 166, 255, 0.2); color: #58a6ff; }
+
+.btn-red { background: #da3633; color: #ffffff; }
+.btn-amber { background: #d29922; color: #ffffff; }
+.btn-green { background: #238636; color: #ffffff; }
+.btn-blue { background: #1f6beb; color: #ffffff; }
+
+/* ==========================================================================
+   FORMULÁRIO FOCADO EM TELA ÚNICA
+   ========================================================================== */
+.form-registro-focado {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 32px;
+    border-radius: 18px;
+    max-width: 580px;
+    margin: 10px auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.form-header-focus {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #30363d;
+}
+
+.form-header-focus h3 {
+    font-size: 1.2rem;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.form-header-focus p {
+    color: #8b949e;
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
+
+.form-header-focus .icone-card {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.campo-duplo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.campo label {
+    color: #c9d1d9;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.campo input[type="text"],
+.campo input[type="number"],
+.campo input[type="date"],
+.campo select {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    color: #ffffff;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.campo input:focus,
+.campo select:focus {
+    border-color: #58a6ff;
+}
+
+.btn-confirmar {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: opacity 0.2s;
+}
+
+.btn-confirmar:hover {
+    opacity: 0.9;
+}
+
+/* ==========================================================================
+   CAIXA DE RECORRÊNCIA E SWITCH TOGGLE
+   ========================================================================== */
+.box-toggle-opt {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 18px 0 24px 0;
+}
+
+.toggle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toggle-header strong {
+    display: block;
+    color: #f0f6fc;
+    font-size: 0.92rem;
+}
+
+.toggle-header small {
+    color: #8b949e;
+    font-size: 0.8rem;
+}
+
+.toggle-content {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #30363d;
+}
+
+/* SWITCH TOGGLE */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #30363d;
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background-color: #238636;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* ==========================================================================
+   OTIMIZAÇÕES RESPONSIVAS PARA MOBILE
+   ========================================================================== */
+@media (max-width: 768px) {
+    body {
+        padding: 8px;
+    }
+
+    /* Reduz o topo da navegação */
+    .navbar {
+        padding: 8px 12px;
+    }
+
+    /* Otimiza a saudação e esconde o texto secundário no celular */
+    .dashboard-hero {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .dashboard-hero p, 
+    .dashboard-hero subtitle {
+        display: none; /* Esconde frases longas para economizar espaço */
+    }
+
+    /* BOTÕES EM LINHA (Estilo Nubank/Revolut) */
+    .action-bar-buttons,
+    .dashboard-hero .action-buttons,
+    .hero-buttons {
+        display: flex !important;
+        flex-direction: row !important; /* Coloca os 3 botões lado a lado */
+        gap: 8px !important;
+        width: 100%;
+    }
+
+    .action-btn, 
+    .btn-acao {
+        flex: 1;
+        padding: 10px 4px !important;
+        font-size: 0.8rem !important;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* CARDS DE SALDO LADO A LADO (2 Colunas no Mobile) */
+    .kpi-grid,
+    .cards-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* Coloca os cards lado a lado */
+        gap: 10px !important;
+    }
+
+    /* Ajuste de tamanho nos cards para ficarem compactos */
+    .kpi-card,
+    .card-financeiro {
+        padding: 12px !important;
+    }
+
+    .kpi-card h2,
+    .card-financeiro h2,
+    .card-financeiro .valor {
+        font-size: 1.2rem !important; /* Diminui o tamanho do R$ 0,00 */
+        margin: 6px 0 !important;
+    }
+
+    .kpi-card p,
+    .card-financeiro small {
+        font-size: 0.7rem !important; /* Descrição menor no rodapé do card */
+    }
+}
+    /* Botão Metas - Fundo Roxo */
+.btn-metas {
+    background-color: #7c3aed !important; /* Roxo */
+    color: #ffffff !important;
+    border: 1px solid #6d28d9;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.btn-metas:hover {
+    background-color: #6d28d9 !important;
+}
+
+/* Botão Extrato - Fundo Azul Escuro */
+.btn-extrato {
+    background-color: #1e40af !important; /* Azul escuro */
+    color: #ffffff !important;
+    border: 1px solid #1d4ed8;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.btn-extrato:hover {
+    background-color: #1e3a8a !important;
+}
+
+/* Botão Voltar ao Painel (conforme imagem de referência) */
+.btn-voltar {
+    background-color: #1b222d !important; /* Fundo escuro */
+    color: #38bdf8 !important; /* Texto azul claro / ciano */
+    border: 1px solid #2a3444; /* Borda sutil arredondada */
+    border-radius: 10px;
+    padding: 10px 18px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #242c3b !important;
+    border-color: #38bdf8;
+}

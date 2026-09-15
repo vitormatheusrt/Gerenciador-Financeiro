@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="brand-header">
+            <h1 class="brand-title">ClearFin</h1>
+            <p class="brand-subtitle">Gestão Financeira Descomplicada</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="auth-tabs">
+            <button type="button" class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button>
+            <button type="button" class="auth-tab" onclick="switchAuthTab('cadastro')">Criar Conta</button>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="form-login" action="{{ url_for('login') }}" method="POST" class="auth-form active">
+            <div class="form-group">
+                <label for="log_usuario">Usuário</label>
+                <input type="text" id="log_usuario" name="log_usuario" placeholder="Seu usuário" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="log_senha">Senha</label>
+                <input type="password" id="log_senha" name="log_senha" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-primary">Acessar Conta</button>
+        </form>
+
+        <!-- Formulário de Cadastro -->
+        <form id="form-cadastro" action="{{ url_for('cadastro') }}" method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="cad_nome">Nome de Exibição</label>
+                <input type="text" id="cad_nome" name="cad_nome" placeholder="Seu Nome" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="cad_usuario">Nome de Login</label>
+                <input type="text" id="cad_usuario" name="cad_usuario" placeholder="usuario_sem_espacos" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="cad_senha">Senha (mín. 6 caracteres)</label>
+                <input type="password" id="cad_senha" name="cad_senha" placeholder="••••••••" required minlength="6">
+            </div>
+            <button type="submit" class="btn-primary">Criar Minha Conta</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.login-wrapper {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-card {
+    background: #121824;
+    border: 1px solid #1f293d;
+    border-radius: 16px;
+    padding: 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.brand-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.brand-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.brand-subtitle {
+    font-size: 13px;
+    color: #8b92a5;
+}
+
+.alert-message {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.auth-tabs {
+    display: flex;
+    background: #0b0f19;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.auth-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #8b92a5;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-tab.active {
+    background: #1f293d;
+    color: #ffffff;
+}
+
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-form.active {
+    display: flex;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    color: #a0a7b8;
+    font-weight: 500;
+}
+
+.form-group input {
+    background: #0b0f19;
+    border: 1px solid #2a3447;
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #3b82f6;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 6px;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+</style>
+
+<script>
+function switchAuthTab(tab) {
+    const tabs = document.querySelectorAll('.auth-tab');
+    const formLogin = document.getElementById('form-login');
+    const formCadastro = document.getElementById('form-cadastro');
+
+    tabs[0].classList.toggle('active', tab === 'login');
+    tabs[1].classList.toggle('active', tab === 'cadastro');
+
+    if (tab === 'login') {
+        formLogin.classList.add('active');
+        formCadastro.classList.remove('active');
+    } else {
+        formCadastro.classList.add('active');
+        formLogin.classList.remove('active');
+    }
+}
+</script>
+{% endblock %}
