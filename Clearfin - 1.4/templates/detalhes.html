@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Lançamentos de {{ mes_ano }}</h2>
+<p>Entradas: R$ {{ "%.2f"|format(entradas) }} | Saídas: R$ {{ "%.2f"|format(saidas) }}</p>
+<p>Saldo: R$ {{ "%.2f"|format(saldo_final) }}</p>
+
+<ul>
+    {% for t in transacoes %}
+    <li>{{ t.data_vencimento }} - {{ t.descricao }}: R$ {{ "%.2f"|format(t.valor) }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
